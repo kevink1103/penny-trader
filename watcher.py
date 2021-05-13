@@ -92,7 +92,7 @@ def main(symbol):
         if abs(diff_unit) >= 1 and timestamp >= CACHE["time"]:
             diff = Decimal(price) - Decimal(CACHE["price"])  # if pos, price up, if neg, price down
             direction = "UP" if diff > 0 else "DOWN"
-            content = f"{direction} {price} {t_datetime} ({timestamp}) => {CACHE['price']} {CACHE['datetime']} ({CACHE['time']}) = {diff}"
+            content = f"{direction} {CACHE['price']} => {price} [{CACHE['datetime']} = {diff}\n({CACHE['time']}) {t_datetime} ({timestamp})]"
             print(f"[signal] {content}")
             # DO SOMETHING
             global BOT
