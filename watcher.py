@@ -74,7 +74,11 @@ def start_listening_thread():
         print(f"[telegram] {content}")
         BOT.reply_to(message, content)
 
-    BOT.infinity_polling()
+    while True:
+        try:
+            BOT.infinity_polling()
+        except Exception as e:
+            print("[telegram] listening error: {e}")
 
 
 def main(symbol):
@@ -125,4 +129,7 @@ def main(symbol):
 
 
 if __name__ == "__main__":
-    main(SYMBOL)
+    try:
+        main(SYMBOL)
+    except Exception as e:
+        print(f"[error] main function: {e}")
