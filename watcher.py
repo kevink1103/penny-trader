@@ -134,5 +134,4 @@ if __name__ == "__main__":
             main(SYMBOL)
         except Exception as e:
             print(f"[error] main function: {e}")
-            global CHAT_ID
             BOT.send_message(CHAT_ID, f"error\n{e}")
