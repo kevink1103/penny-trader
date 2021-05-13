@@ -64,6 +64,7 @@ def start_listening_thread():
 
         global CACHE
         if not CACHE:
+            BOT.send_message(CHAT_ID, "error, try again later")
             return
 
         symbol = CACHE["symbol"]
@@ -76,9 +77,10 @@ def start_listening_thread():
 
     while True:
         try:
-            BOT.infinity_polling()
+            BOT.polling()
         except Exception as e:
             print(f"[telegram] listening error: {e}")
+            BOT.send_message(CHAT_ID, f"listening error\n{e}")
 
 
 def main(symbol):
@@ -114,7 +116,7 @@ def main(symbol):
         if abs(diff_unit) >= 1 and timestamp >= CACHE["time"]:
             diff = Decimal(price) - Decimal(CACHE["price"])  # if pos, price up, if neg, price down
             direction = "UP" if diff > 0 else "DOWN"
-            content = f"{direction}\n{symbol}\n{CACHE['price']} => {price}\n{diff}\n{CACHE['datetime']} ({CACHE['time']})\n{t_datetime} ({timestamp})"
+            content = f"{direction} - {symbol}\n{CACHE['price']} => {price}\n{diff}\n{CACHE['datetime']} ({CACHE['time']})\n{t_datetime} ({timestamp})"
             print(f"[signal] {direction} {symbol} {CACHE['price']} => {price} {diff} {CACHE['datetime']} ({CACHE['time']}) {t_datetime} ({timestamp})")
             # DO SOMETHING
             global BOT
@@ -134,4 +136,4 @@ if __name__ == "__main__":
             main(SYMBOL)
         except Exception as e:
             print(f"[error] main function: {e}")
-            BOT.send_message(CHAT_ID, f"error\n{e}")
+            BOT.send_message(CHAT_ID, f"main error\n{e}")
