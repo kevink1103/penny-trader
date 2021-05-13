@@ -15,7 +15,7 @@ load_dotenv()
 # DOGE TO THE MOON!
 SYMBOL = os.getenv("FUTURES_SYMBOL")
 WATCH_UNIT = os.getenv("WATCH_UNIT")
-INTERVAL = 1
+INTERVAL = 5
 BASE_URL = "https://fapi.binance.com"
 CACHE = None
 
@@ -78,7 +78,7 @@ def start_listening_thread():
         try:
             BOT.infinity_polling()
         except Exception as e:
-            print("[telegram] listening error: {e}")
+            print(f"[telegram] listening error: {e}")
 
 
 def main(symbol):
@@ -129,7 +129,10 @@ def main(symbol):
 
 
 if __name__ == "__main__":
-    try:
-        main(SYMBOL)
-    except Exception as e:
-        print(f"[error] main function: {e}")
+    while True:
+        try:
+            main(SYMBOL)
+        except Exception as e:
+            print(f"[error] main function: {e}")
+            global CHAT_ID
+            BOT.send_message(CHAT_ID, f"error\n{e}")
