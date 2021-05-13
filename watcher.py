@@ -60,8 +60,8 @@ def start_listening_thread():
 
 
 def main(symbol):
-    # t = Thread(target=start_listening_thread, daemon=True)
-    # t.run()
+    t = Thread(target=start_listening_thread, daemon=True)
+    t.start()
 
     while True:
         start = time.time()
