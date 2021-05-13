@@ -40,6 +40,24 @@ def start_listening_thread():
     def send_welcome(message):
         BOT.reply_to(message, "Howdy, how are you doing?")
 
+
+    @BOT.message_handler(commands=['interval'])
+    def set_interval(message):
+        commands = message.text.split()
+        if len(commands) != 2:
+            BOT.reply_to(message, f"command [{message.text}] invalid")
+            return
+
+        try:
+            interval = int(commands[1])
+            global INTERVAL
+            INTERVAL = interval
+        except Exception as e:
+            BOT.reply_to(message, f"command [{message.text}] invalid")
+            return
+
+        BOT.reply_to(message, f"interval {INTERVAL} set")
+
     @BOT.message_handler(commands=['price'])
     def send_price(message):
         print("[info] price command received")
@@ -92,8 +110,8 @@ def main(symbol):
         if abs(diff_unit) >= 1 and timestamp >= CACHE["time"]:
             diff = Decimal(price) - Decimal(CACHE["price"])  # if pos, price up, if neg, price down
             direction = "UP" if diff > 0 else "DOWN"
-            content = f"{direction}\n{CACHE['price']} => {price}\n{diff}\n[{CACHE['datetime']} ({CACHE['time']}) {t_datetime} ({timestamp})]"
-            print(f"[signal] {content}")
+            content = f"{direction}\n{symbol}\n{CACHE['price']} => {price}\n{diff}\n{CACHE['datetime']} ({CACHE['time']})\n{t_datetime} ({timestamp})"
+            print(f"[signal] {direction} {symbol} {CACHE['price']} => {price} {diff} {CACHE['datetime']} ({CACHE['time']}) {t_datetime} ({timestamp})")
             # DO SOMETHING
             global BOT
             global CHAT_ID
