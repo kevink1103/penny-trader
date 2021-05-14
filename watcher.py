@@ -36,14 +36,53 @@ def fetch_price(symbol):
 
 
 def start_listening_thread():
-    @BOT.message_handler(commands=['start', 'help'])
+    @BOT.message_handler(commands=['start', 'help', 'info'])
     def send_welcome(message):
-        commands = """List of commands
-        /price - get current price of DOGEUSDT on Binance Futures
-        /interval [number] - set price fetching interval (number in seconds)
+        commands = """
+Hi! I am Price Watcher.
+
+List of Commands
+/price - get current price of DOGEUSDT on Binance Futures
+/symbol [symbol] - set symbol you want to listen for price
+/unit - set watch unit (0.01)
+/interval [number] - set price fetching interval (number in seconds)
         """
         BOT.reply_to(message, commands)
 
+    @BOT.message_handler(commands=['symbol'])
+    def set_symbol(message):
+        commands = message.text.split()
+        if len(commands) != 2:
+            BOT.reply_to(message, f"command [{message.text}] invalid")
+            return
+
+        global CACHE
+        CACHE = None
+
+        global SYMBOL
+        symbol = commands[1]
+        SYMBOL = symbol
+        BOT.reply_to(message, f"symbol {SYMBOL} set")
+
+    @BOT.message_handler(commands=['unit'])
+    def set_watch_unit(message):
+        commands = message.text.split()
+        if len(commands) != 2:
+            BOT.reply_to(message, f"command [{message.text}] invalid")
+            return
+
+        try:
+            float(commands[1])
+        except Exception as e:
+            BOT.reply_to(message, f"command [{message.text}] invalid")
+
+        global CACHE
+        CACHE = None
+
+        global WATCH_UNIT
+        watch_unit = commands[1]
+        WATCH_UNIT = watch_unit
+        BOT.reply_to(message, f"watch unit {WATCH_UNIT} set")
 
     @BOT.message_handler(commands=['interval'])
     def set_interval(message):
@@ -53,8 +92,8 @@ def start_listening_thread():
             return
 
         try:
-            interval = int(commands[1])
             global INTERVAL
+            interval = int(commands[1])
             INTERVAL = interval
         except Exception as e:
             BOT.reply_to(message, f"command [{message.text}] invalid")
@@ -87,9 +126,20 @@ def start_listening_thread():
             BOT.send_message(CHAT_ID, f"listening error\n{e}")
 
 
+def send_init_message():
+    global BOT
+    global CHAT_ID
+    global SYMBOL
+    global WATCH_UNIT
+    global INTERVAL
+    BOT.send_message(CHAT_ID, f"Start listening for {SYMBOL} ({WATCH_UNIT}) every {INTERVAL}s")
+
+
 def main(symbol):
     t = Thread(target=start_listening_thread, daemon=True)
     t.start()
+
+    send_init_message()
 
     while True:
         start = time.time()
