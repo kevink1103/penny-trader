@@ -44,7 +44,7 @@ Hi! I am Price Watcher.
 List of Commands
 /price - get current price of DOGEUSDT on Binance Futures
 /symbol [symbol] - set symbol you want to listen for price
-/unit - set watch unit (0.01)
+/unit [unit] - set watch unit (0.01)
 /interval [number] - set price fetching interval (number in seconds)
         """
         BOT.reply_to(message, commands)
